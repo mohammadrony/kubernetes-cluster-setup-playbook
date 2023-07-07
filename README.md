@@ -1,11 +1,11 @@
-# Configuring kubernetes cluster in with control plane and worker for RedHat Linux
+# Configuring kubernetes cluster in with control plane and worker for CentOS 9
 
-An Ansible playbook to configure Kubernetes cluster with control plane and worker node.
+An Ansible playbook to prepare Kubernetes cluster with control plane and worker node.
 
 ## Clone this repository to ansible home
 
 ```bash
-git clone https://github.com/mohammadrony/kubernetes-install-playbook.git
+git clone https://github.com/mohammadrony/kubernetes-cluster-setup-playbook.git
 ```
 
 ## Pre-requisites
