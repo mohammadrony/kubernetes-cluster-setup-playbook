@@ -1,0 +1,56 @@
+---
+- name: Install kubectl
+  dnf:
+    name: kubectl
+    disable_excludes: kubernetes
+    state: present
+
+- name: Pull kubernetes container images
+  command: kubeadm config images pull
+
+- name: Initialize kubernetes cluster
+  shell: kubeadm init --control-plane-endpoint={{ control_ip }} --pod-network-cidr=172.16.0.0/16  --cri-socket=unix:///run/containerd/containerd.sock
+  register: output
+
+- name: Save output file from master
+  copy:
+    content: "{{ output.stdout }}"
+    dest: /tmp/output.txt
+  become_user: root
+  
+- name: Copy join command to local file
+  fetch: 
+    src: /tmp/output.txt
+    dest: /tmp/output.txt
+    flat: yes
+
+- name: Create .kube directory
+  file:
+    path: /root/.kube
+    state: directory
+    mode: 0755
+
+- name: Copy admin.conf to user kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    owner: root
+    group: root
+    mode: '0644'
+    remote_src: yes
+
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    path: /etc/profile.d/kubeconfig.sh
+    line: 'export KUBECONFIG=/etc/kubernetes/admin.conf'
+    create: yes
+
+- name: Download Calico YAML
+  get_url:
+    url: https://raw.githubusercontent.com/projectcalico/calico/master/manifests/calico.yaml
+    dest: /root/calico.yaml
+
+- name: Apply Calico YAML
+  command: kubectl apply -f calico.yaml
+  args:
+    chdir: /root/
