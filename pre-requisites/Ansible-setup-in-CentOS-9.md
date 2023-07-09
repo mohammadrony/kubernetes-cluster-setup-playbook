@@ -123,3 +123,5 @@ EOF
 ```bash
 ansible all -m ping
 ```
+
+Thank you.
