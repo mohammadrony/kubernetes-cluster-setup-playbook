@@ -1,4 +1,4 @@
-# Configure Ansible in control node and managed node for CentOS-9
+# Setup Ansible in control node and managed node in CentOS-9
 
 ## Node Naming convention
 

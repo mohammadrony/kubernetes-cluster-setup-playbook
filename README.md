@@ -2,15 +2,15 @@
 
 An Ansible playbook to prepare Kubernetes cluster with control plane and worker node.
 
+## Pre-requisites
+
+Prepare ansible connection from ansible host to control plane and workder node. You can follow this document [ansible setup](./pre-requisites/Ansible-setup-in-CentOS-9.md) to prepare the connection.
+
 ## Clone this repository to ansible home
 
 ```bash
 git clone https://github.com/mohammadrony/kubernetes-cluster-setup-playbook.git
 ```
-
-## Pre-requisites
-
-Prepare ansible connection from ansible host to control plane and workder node. You can follow this document [ansible setup](./pre-requisites/Ansible-setup-in-CentOS-9.md) to prepare the connection.
 
 ## Update variable in playbook
 
