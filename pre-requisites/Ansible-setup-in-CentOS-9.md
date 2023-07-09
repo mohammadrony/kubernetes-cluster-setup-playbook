@@ -5,22 +5,24 @@
 | Host name | Used terms |
 |-----------|------------|
 | Ansible host | control node |
-| kubernetes master | master node, managed node |
-| kubernetes worker | worker node, managed node |
--------------------------------------------------
+| kubernetes master | managed node |
+| kubernetes worker | managed node |
+------------------------------------
 
 ## Configure IP address and host name in control node for ansible
 
 ```bash
-echo '<ip-addr> <host-name1>' >> /etc/hosts
-echo '<ip-addr> <host-name2>' >> /etc/hosts
+echo '<ip-addr1> <host-name1>' >> /etc/hosts
+echo '<ip-addr2> <host-name2>' >> /etc/hosts
+echo '<ip-addr3> <host-name3>' >> /etc/hosts
 ```
 
-## Configure IP address and host name in k8s master node for cluster
+## Configure IP address and host name in kubernetes master node for cluster
 
 ```bash
-ssh root@<k8s-master> "echo '<ip-addr> <k8s-host1>' >> /etc/hosts"
-ssh root@<k8s-master> "echo '<ip-addr> <k8s-host2>' >> /etc/hosts"
+k8s_master=<k8s-master>
+ssh root@${k8s_master} "echo '<ip-addr> <k8s-master>' >> /etc/hosts"
+ssh root@${k8s_master} "echo '<ip-addr> <k8s-node1>' >> /etc/hosts"
 ```
 
 ## Install Ansible in control node
@@ -36,7 +38,16 @@ sudo dnf install -y ansible
 sudo useradd ansible
 ```
 
-## Delete ansible user password and login as ansible
+## Setup password for ansible user and login
+
+Create new password
+
+```bash
+sudo passwd ansible
+su - ansible
+```
+
+Or delete the password
 
 ```bash
 sudo passwd -d ansible
@@ -49,44 +60,53 @@ su - ansible
 ssh-keygen -f /home/ansible/.ssh/id_rsa
 ```
 
-## Prepare ansible client nodes
+## Prepare ansible managed nodes
 
-### Create ansible user in master node and worker node
+Commands mentioning `<k8s-host>` is required to run in all managed node.
 
-```bash
-ssh root@<k8s-host> "ansible_home='/home/ansible'"
-ssh root@<k8s-host> "useradd ansible"
-ssh root@<k8s-host> "mkdir -p ${ansible_home}/.ssh"
-ssh root@<k8s-host> "chmod 700 ${ansible_home}/.ssh"
-ssh root@<k8s-host> "chown -R ansible:ansible ${ansible_home}/.ssh"
-```
-
-### Copy id_rsa.pub key to master node and worker node's .ssh/authorized_keys file
+### Create ansible user in managed node
 
 ```bash
-ssh root@<k8s-host> "ansible_home='/home/ansible'"
-scp ${ansible_home}/.ssh/id_rsa.pub root@<k8s-host>:${ansible_home}/.ssh/id_rsa.pub
-ssh root@<k8s-host> "chown ansible:ansible ${ansible_home}/.ssh/id_rsa.pub"
-ssh root@<k8s-host> "tee < ${ansible_home}/.ssh/id_rsa.pub -a ${ansible_home}/.ssh/authorized_keys"
-ssh root@<k8s-host> "chown ansible:ansible ${ansible_home}/.ssh/authorized_keys"
-ssh root@<k8s-host> "chmod 600 ${ansible_home}/.ssh/authorized_keys"
+k8s_host="<k8s-host>"
+ansible_home='/home/ansible'
+
+ssh root@${k8s_host} "useradd ansible"
+ssh root@${k8s_host} "mkdir -p ${ansible_home}/.ssh"
+ssh root@${k8s_host} "chmod 700 ${ansible_home}/.ssh"
+ssh root@${k8s_host} "chown -R ansible:ansible ${ansible_home}/.ssh"
 ```
 
-### Add ansible to sudoers group in master node and worker node
+### Copy id_rsa.pub key from control node to managed nodes .ssh/authorized_keys file
 
 ```bash
-ssh root@<k8s-host> "echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible"
+k8s_host="<k8s-host>"
+ansible_home='/home/ansible'
+
+scp ${ansible_home}/.ssh/id_rsa.pub root@${k8s_host}:${ansible_home}/.ssh/id_rsa.pub
+ssh root@${k8s_host} "chown ansible:ansible ${ansible_home}/.ssh/id_rsa.pub"
+ssh root@${k8s_host} "tee < ${ansible_home}/.ssh/id_rsa.pub -a ${ansible_home}/.ssh/authorized_keys"
+ssh root@${k8s_host} "chown ansible:ansible ${ansible_home}/.ssh/authorized_keys"
+ssh root@${k8s_host} "chmod 600 ${ansible_home}/.ssh/authorized_keys"
 ```
 
-### Allow ansible user to execute command through remotely from control node
+### Add ansible to sudoers group for managed nodes
 
 ```bash
-ssh root@<k8s-host> "sed -i 's/#PubkeyAuthentication\syes/PubkeyAuthentication yes/' /etc/ssh/sshd_config"
-ssh root@<k8s-host> "sed -i 's/#AuthorizedKeysFile\s.ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config"
-ssh root@<k8s-host> "systemctl restart sshd"
+k8s_host="<k8s-host>"
+ssh root@${k8s_host} "echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible"
 ```
 
-## Add host groups in control node for ansible
+### Allow ansible user to execute command remotely from control node
+
+```bash
+k8s_host="<k8s-host>"
+
+ssh root@${k8s_host} "sed -i 's/#PubkeyAuthentication\syes/PubkeyAuthentication yes/' /etc/ssh/sshd_config"
+ssh root@${k8s_host} "sed -i 's/#AuthorizedKeysFile\s.ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config"
+ssh root@${k8s_host} "systemctl restart sshd"
+```
+
+## Add host groups in control node for ansible user
 
 ```bash
 sudo tee -a /etc/ansible/hosts << EOF
