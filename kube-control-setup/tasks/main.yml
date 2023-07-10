@@ -14,7 +14,7 @@
 
 # - name: Copy output to ansible host 
 #   copy:
-#     dest: /tmp/output.txt
+#     dest: /tmp/kube-output.txt
 #     content: |-
 #       {% for host in ansible_play_hosts_all %}
 #       {{ '###' }}{{ host }}{{ '###' }}
@@ -25,12 +25,12 @@
 - name: Save output file from master
   copy:
     content: "{{ output.stdout }}"
-    dest: /tmp/output.txt
+    dest: /tmp/kube-output.txt
   
 - name: Copy join command to local file
   fetch: 
-    src: /tmp/output.txt
-    dest: /tmp/output.txt
+    src: /tmp/kube-output.txt
+    dest: /tmp/kube-output.txt
     flat: yes
 
 - name: Create .kube directory
@@ -47,6 +47,14 @@
     group: root
     mode: '0644'
     remote_src: yes
+
+- name: Fetch file and set permissions
+  fetch:
+    src: "/root/.kube/config"
+    dest: "/tmp/kubeconfig"
+    flat: yes
+    validate_checksum: yes
+  become_user: root
 
 - name: Set KUBECONFIG environment variable
   lineinfile:
