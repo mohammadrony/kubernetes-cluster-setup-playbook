@@ -7,7 +7,7 @@
   yum:
     name: firewalld
     state: present
-    
+
 - name: disable firewall service for labs
   service:
     name: firewalld
@@ -20,31 +20,31 @@
     dest: /etc/modules-load.d/k8s.conf
     owner: root
     group: root
-    mode: '0644'
-    
+    mode: "0644"
+
 - name: Letting iptables see bridged traffic
   copy:
     src: files/network-k8s.conf
     dest: /etc/sysctl.d/k8s.conf
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 
 - name: Reload sysctl config for iptables
   command: sysctl --system
 
-- name: Disable SWAP 
+- name: Disable SWAP
   shell: |
     swapoff -a
 
-- name: Disable SWAP in fstab 
+- name: Disable SWAP in fstab
   lineinfile:
     path: /etc/fstab
-    regexp: 'swap'
+    regexp: "swap"
     state: absent
 
 - name: Install dnf-utils
-  dnf:
+  yum:
     name: yum-utils
     state: present
     update_cache: true
@@ -83,11 +83,11 @@
     dest: /etc/yum.repos.d/kubernetes.repo
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 
 - name: Update repository cache
   dnf:
-    name: '*'
+    name: "*"
     state: latest
 
 - name: Install kubelet, kubeadm
@@ -98,7 +98,6 @@
     disable_excludes: kubernetes
     state: latest
     update_cache: true
-
 
 - name: start kubelet
   service:

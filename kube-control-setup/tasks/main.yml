@@ -5,6 +5,10 @@
     disable_excludes: kubernetes
     state: present
 
+- name: Append alias to .bashrc
+  command: echo "alias k='kubectl'" >> /root/.bashrc
+  become_user: root
+
 - name: Pull kubernetes container images
   command: kubeadm config images pull
 
@@ -12,7 +16,7 @@
   shell: kubeadm init --control-plane-endpoint={{ control_ip }} --pod-network-cidr=172.16.0.0/16  --cri-socket=unix:///run/containerd/containerd.sock
   register: output
 
-# - name: Copy output to ansible host 
+# - name: Copy output to ansible host
 #   copy:
 #     dest: /tmp/kube-output.txt
 #     content: |-
@@ -26,9 +30,9 @@
   copy:
     content: "{{ output.stdout }}"
     dest: /tmp/kube-output.txt
-  
+
 - name: Copy join command to local file
-  fetch: 
+  fetch:
     src: /tmp/kube-output.txt
     dest: /tmp/kube-output.txt
     flat: yes
@@ -45,7 +49,7 @@
     dest: /root/.kube/config
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
     remote_src: yes
 
 - name: Fetch file and set permissions
@@ -59,7 +63,7 @@
 - name: Set KUBECONFIG environment variable
   lineinfile:
     path: /etc/profile.d/kubeconfig.sh
-    line: 'export KUBECONFIG=/etc/kubernetes/admin.conf'
+    line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
     create: yes
 
 - name: Download Calico YAML
