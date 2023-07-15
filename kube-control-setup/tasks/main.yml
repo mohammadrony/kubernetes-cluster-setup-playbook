@@ -34,7 +34,7 @@
 - name: Copy join command to local file
   fetch:
     src: /tmp/kube-output.txt
-    dest: /tmp/kube-output.txt
+    dest: /home/ansible/kube-output.txt
     flat: yes
 
 - name: Create .kube directory
@@ -55,7 +55,7 @@
 - name: Fetch file and set permissions
   fetch:
     src: "/root/.kube/config"
-    dest: "/tmp/kubeconfig"
+    dest: "/home/ansible/kubeconfig.txt"
     flat: yes
     validate_checksum: yes
   become_user: root
