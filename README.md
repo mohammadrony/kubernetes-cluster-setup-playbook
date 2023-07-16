@@ -14,7 +14,7 @@ git clone https://github.com/mohammadrony/kubernetes-cluster-setup-playbook.git
 
 ## Update variable in playbook
 
-Update the control plane ip address variable [file](./kube-control-setup/vars/main.yml) file in the repository.
+Update the control plane ip address in vars [file](./kube-control-setup/vars/main.yml) in kube-control-setup.
 
 ## Check ansible hosts file
 
