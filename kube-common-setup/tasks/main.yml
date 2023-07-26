@@ -99,7 +99,7 @@
     state: latest
     update_cache: true
 
-- name: start kubelet
+- name: Start Kubelet
   service:
     name: kubelet
     enabled: yes

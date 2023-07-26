@@ -1,5 +1,5 @@
 [kcontrol]
-54.254.133.100
+kube-control
 
 [knodes]
-18.143.240.231
+kube-node1

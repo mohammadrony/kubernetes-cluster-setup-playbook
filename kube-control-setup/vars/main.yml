@@ -1,2 +1,2 @@
 ---
-control_ip: 192.168.100.93
+control_ip: <kube-control-ip>

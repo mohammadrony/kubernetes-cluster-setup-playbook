@@ -66,6 +66,10 @@
     line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
     create: yes
 
+- name: Pause for 2 minutes to start kube custer
+  pause:
+    minutes: 2
+
 - name: Download Calico YAML
   get_url:
     url: https://raw.githubusercontent.com/projectcalico/calico/master/manifests/calico.yaml
