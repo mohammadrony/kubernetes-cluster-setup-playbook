@@ -12,17 +12,29 @@
 ## Configure IP address and host name in control node for ansible
 
 ```bash
-echo '<ip-addr1> <host-name1>' >> /etc/hosts
-echo '<ip-addr2> <host-name2>' >> /etc/hosts
-echo '<ip-addr3> <host-name3>' >> /etc/hosts
+echo '<ip-addr1> <ansible-host>' >> /etc/hosts
+echo '<ip-addr2> kube-control' >> /etc/hosts
+echo '<ip-addr3> kube-node1' >> /etc/hosts
 ```
 
-## Configure IP address and host name in kubernetes master node for cluster
+## Configure IP address and host name in kubernetes master node
 
 ```bash
-k8s_master=<k8s-master>
-ssh root@${k8s_master} "echo '<ip-addr> <k8s-master>' >> /etc/hosts"
-ssh root@${k8s_master} "echo '<ip-addr> <k8s-node1>' >> /etc/hosts"
+kube_control=<ip-addr2>
+ssh root@${kube_control} "echo 'kube-control' >> /etc/hostname"
+ssh root@${kube_control} "echo '<ip-addr2> kube-control' >> /etc/hosts"
+ssh root@${kube_control} "echo '<ip-addr3> kube-node1' >> /etc/hosts"
+ssh root@${kube_control} "reboot now"
+```
+
+## Configure IP address and host name in kubernetes worker node
+
+```bash
+kube_node1=<ip-addr3>
+ssh root@${kube_node1} "echo 'kube-node1' >> /etc/hostname"
+ssh root@${kube_node1} "echo '<ip-addr2> kube-control' >> /etc/hosts"
+ssh root@${kube_node1} "echo '<ip-addr3> kube-node1' >> /etc/hosts"
+ssh root@${kube_node1} "reboot now"
 ```
 
 ## Install Ansible in control node
@@ -62,48 +74,48 @@ ssh-keygen -f /home/ansible/.ssh/id_rsa
 
 ## Prepare ansible managed nodes
 
-Commands mentioning `<k8s-host>` is required to run in all managed node.
+Commands mentioning `kube_host` are required to run on all managed nodes. i.e., `kube-control` and `kube-node1`.
 
 ### Create ansible user in managed node
 
 ```bash
-k8s_host="<k8s-host>"
+kube_host="<kube-host>"
 ansible_home='/home/ansible'
 
-ssh root@${k8s_host} "useradd ansible"
-ssh root@${k8s_host} "mkdir -p ${ansible_home}/.ssh"
-ssh root@${k8s_host} "chmod 700 ${ansible_home}/.ssh"
-ssh root@${k8s_host} "chown -R ansible:ansible ${ansible_home}/.ssh"
+ssh root@${kube_host} "useradd ansible"
+ssh root@${kube_host} "mkdir -p ${ansible_home}/.ssh"
+ssh root@${kube_host} "chmod 700 ${ansible_home}/.ssh"
+ssh root@${kube_host} "chown -R ansible:ansible ${ansible_home}/.ssh"
 ```
 
 ### Copy id_rsa.pub key from control node to managed nodes .ssh/authorized_keys file
 
 ```bash
-k8s_host="<k8s-host>"
+kube_host="<k8s-host>"
 ansible_home='/home/ansible'
 
-scp ${ansible_home}/.ssh/id_rsa.pub root@${k8s_host}:${ansible_home}/.ssh/id_rsa.pub
-ssh root@${k8s_host} "chown ansible:ansible ${ansible_home}/.ssh/id_rsa.pub"
-ssh root@${k8s_host} "tee < ${ansible_home}/.ssh/id_rsa.pub -a ${ansible_home}/.ssh/authorized_keys"
-ssh root@${k8s_host} "chown ansible:ansible ${ansible_home}/.ssh/authorized_keys"
-ssh root@${k8s_host} "chmod 600 ${ansible_home}/.ssh/authorized_keys"
+scp ${ansible_home}/.ssh/id_rsa.pub root@${kube_host}:${ansible_home}/.ssh/id_rsa.pub
+ssh root@${kube_host} "chown ansible:ansible ${ansible_home}/.ssh/id_rsa.pub"
+ssh root@${kube_host} "tee < ${ansible_home}/.ssh/id_rsa.pub -a ${ansible_home}/.ssh/authorized_keys"
+ssh root@${kube_host} "chown ansible:ansible ${ansible_home}/.ssh/authorized_keys"
+ssh root@${kube_host} "chmod 600 ${ansible_home}/.ssh/authorized_keys"
 ```
 
 ### Add ansible to sudoers group for managed nodes
 
 ```bash
-k8s_host="<k8s-host>"
-ssh root@${k8s_host} "echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible"
+kube_host="<k8s-host>"
+ssh root@${kube_host} "echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible"
 ```
 
 ### Allow ansible user to execute command remotely from control node
 
 ```bash
-k8s_host="<k8s-host>"
+kube_host="<k8s-host>"
 
-ssh root@${k8s_host} "sed -i 's/#PubkeyAuthentication\syes/PubkeyAuthentication yes/' /etc/ssh/sshd_config"
-ssh root@${k8s_host} "sed -i 's/#AuthorizedKeysFile\s.ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config"
-ssh root@${k8s_host} "systemctl restart sshd"
+ssh root@${kube_host} "sed -i 's/#PubkeyAuthentication\syes/PubkeyAuthentication yes/' /etc/ssh/sshd_config"
+ssh root@${kube_host} "sed -i 's/#AuthorizedKeysFile\s.ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config"
+ssh root@${kube_host} "systemctl restart sshd"
 ```
 
 ## Add host groups in control node for ansible user
