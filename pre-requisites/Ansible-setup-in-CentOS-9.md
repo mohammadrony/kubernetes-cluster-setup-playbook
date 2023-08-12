@@ -20,7 +20,7 @@ echo '<ip-addr3> kube-node1' >> /etc/hosts
 ## Configure IP address and host name in kubernetes master node
 
 ```bash
-kube_control=<ip-addr2>
+kube_control="<ip-addr2>"
 ssh root@${kube_control} "echo 'kube-control' >> /etc/hostname"
 ssh root@${kube_control} "echo '<ip-addr2> kube-control' >> /etc/hosts"
 ssh root@${kube_control} "echo '<ip-addr3> kube-node1' >> /etc/hosts"
@@ -30,7 +30,7 @@ ssh root@${kube_control} "reboot now"
 ## Configure IP address and host name in kubernetes worker node
 
 ```bash
-kube_node1=<ip-addr3>
+kube_node1="<ip-addr3>"
 ssh root@${kube_node1} "echo 'kube-node1' >> /etc/hostname"
 ssh root@${kube_node1} "echo '<ip-addr2> kube-control' >> /etc/hosts"
 ssh root@${kube_node1} "echo '<ip-addr3> kube-node1' >> /etc/hosts"
