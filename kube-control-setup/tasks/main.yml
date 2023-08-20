@@ -54,8 +54,8 @@
 
 - name: Fetch file and set permissions
   fetch:
-    src: "/root/.kube/config"
-    dest: "/home/ansible/kubeconfig.txt"
+    src: /root/.kube/config
+    dest: /home/ansible/kubeconfig.txt
     flat: yes
     validate_checksum: yes
   become_user: root

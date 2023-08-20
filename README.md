@@ -6,9 +6,10 @@ An Ansible playbook to prepare Kubernetes cluster with control plane and worker 
 
 Prepare ansible connection from ansible host to control plane and worker node. You can follow this document [ansible setup](./pre-requisites/Ansible-setup-in-CentOS-9.md) to prepare the connection.
 
-## Clone this repository to ansible home
+## Clone this repository
 
 ```bash
+su - ansible
 git clone https://github.com/mohammadrony/kubernetes-cluster-setup-playbook.git
 ```
 
@@ -28,11 +29,15 @@ kube-control
 kube-node1
 ```
 
-## Finally run the ansible-playbook as ansible user
+## Run Ansible playbook
 
 ```bash
-su ansible
 ansible-playbook playbook.yml
 ```
+
+## Access Kubernetes cluster from remote host
+
+- Find the config file for the cluster from Kubernetes master host's `/root/.kube/config` file or Ansible control host's `/home/ansible/kubeconfig.txt` file.
+- Copy the config file to remote host's `~/.kube/config` file.
 
 Thank you.
