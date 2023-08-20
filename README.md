@@ -37,7 +37,7 @@ ansible-playbook playbook.yml
 
 ## Access Kubernetes cluster from remote host
 
-- Find the config file for the cluster from Kubernetes master host's `/root/.kube/config` file or Ansible control host's `/home/ansible/kubeconfig.txt` file.
+- Find the config file for the cluster from Ansible control host's `/home/ansible/kubeconfig.txt` file or Kubernetes master host's `/root/.kube/config` file.
 - Copy the config file to remote host's `~/.kube/config` file.
 
 Thank you.
