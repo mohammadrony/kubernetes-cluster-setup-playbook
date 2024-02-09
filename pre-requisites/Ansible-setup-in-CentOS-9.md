@@ -136,4 +136,9 @@ EOF
 ansible all -m ping
 ```
 
-Thank you.
+## Remove ansible from host
+
+```bash
+sudo userdel ansible
+sudo rm /home/ansible -rf
+sudo rm /etc/sudoers.d/ansible -f
