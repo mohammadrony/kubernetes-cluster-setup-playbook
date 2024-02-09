@@ -3,7 +3,7 @@ useradd ansible
 passwd -d ansible
 mkdir -p /home/ansible/.ssh
 chmod 700 /home/ansible/.ssh
-echo "<ssh-public-key>" >> /home/ansible/.ssh/authorized_keys
+echo "<public-key>" >> /home/ansible/.ssh/authorized_keys
 chown ansible:ansible -R /home/ansible/.ssh
 echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible
 chmod 600 /home/ansible/.ssh/authorized_keys
@@ -13,7 +13,5 @@ sed -i 's/^\(#PermitRootLogin\s.*\)/PermitRootLogin yes\n\1/' /etc/ssh/sshd_conf
 systemctl restart sshd
 
 # Set hostname
-echo "<ansible-client>" > /etc/hostname
+echo "<hostname>" > /etc/hostname
 reboot now
-
-
