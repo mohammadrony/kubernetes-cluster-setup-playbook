@@ -71,12 +71,6 @@
 #     replace: '\1 true'
 #     backup: yes
 
-- name: start containerd
-  service:
-    name: containerd
-    state: started
-    enabled: true
-
 - name: Letting iptables see bridged traffic
   copy:
     src: files/repo-k8s.repo
@@ -100,6 +94,12 @@
     owner: root
     group: root
     mode: "0644"
+
+- name: start containerd
+  service:
+    name: containerd
+    state: restarted
+    enabled: true
 
 - name: Letting iptables see bridged traffic
   copy:
