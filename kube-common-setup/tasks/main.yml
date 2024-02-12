@@ -61,15 +61,15 @@
 - name: Backup containerd config.toml
   command: mv /etc/containerd/config.toml /etc/containerd/config.toml.orig
 
-- name: Generate default containerd config.toml
-  shell: containerd config default > /etc/containerd/config.toml
+# - name: Generate default containerd config.toml
+#   shell: containerd config default > /etc/containerd/config.toml
 
-- name: Modify containerd config.toml
-  replace:
-    path: /etc/containerd/config.toml
-    regexp: '^(\s*SystemdCgroup =) false'
-    replace: '\1 true'
-    backup: yes
+# - name: Modify containerd config.toml
+#   replace:
+#     path: /etc/containerd/config.toml
+#     regexp: '^(\s*SystemdCgroup =) false'
+#     replace: '\1 true'
+#     backup: yes
 
 - name: start containerd
   service:
@@ -95,7 +95,7 @@
 
 - name: Letting iptables see bridged traffic
   copy:
-    src: files/repo-k8s.repo
+    src: files/host.toml
     dest: /etc/containerd/certs.d/registryserver.ieims.local/host.toml
     owner: root
     group: root
@@ -103,7 +103,7 @@
 
 - name: Letting iptables see bridged traffic
   copy:
-    src: files/repo-k8s.repo
+    src: files/config.toml
     dest: /etc/containerd/config.toml
     owner: root
     group: root
