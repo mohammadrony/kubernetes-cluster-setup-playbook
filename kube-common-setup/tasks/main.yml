@@ -85,6 +85,30 @@
     group: root
     mode: "0644"
 
+- name: Letting iptables see bridged traffic
+  copy:
+    src: files/ca.crt
+    dest: /etc/containerd/certs.d/registryserver.ieims.local/ca.crt
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Letting iptables see bridged traffic
+  copy:
+    src: files/repo-k8s.repo
+    dest: /etc/containerd/certs.d/registryserver.ieims.local/host.toml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Letting iptables see bridged traffic
+  copy:
+    src: files/repo-k8s.repo
+    dest: /etc/containerd/config.toml
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Update repository cache
   dnf:
     name: "*"
@@ -93,10 +117,10 @@
 - name: Install kubelet, kubeadm
   dnf:
     name:
-      - kubelet
-      - kubeadm
-      # - kubelet-1.27.2-0
-      # - kubeadm-1.27.2-0
+      # - kubelet
+      # - kubeadm
+      - kubelet-1.27.2-0
+      - kubeadm-1.27.2-0
     disable_excludes: kubernetes
     state: latest
     update_cache: true

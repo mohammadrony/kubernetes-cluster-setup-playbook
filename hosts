@@ -2,4 +2,8 @@
 kube-control
 
 [knodes]
-kube-node1
+ssh banbeisstagek8snode5
+ssh banbeisstagek8snode6
+ssh banbeisstagek8snode7 
+ssh banbeisstagek8snode8
+ssh banbeisstagek8snode9
