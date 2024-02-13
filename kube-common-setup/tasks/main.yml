@@ -3,16 +3,16 @@
   selinux:
     state: disabled
 
-# - name: Install firewalld package
-#   yum:
-#     name: firewalld
-#     state: present
+- name: Install firewalld package
+  yum:
+    name: firewalld
+    state: present
 
-# - name: disable firewall service for labs
-#   service:
-#     name: firewalld
-#     state: stopped
-#     enabled: false
+- name: disable firewall service for labs
+  service:
+    name: firewalld
+    state: stopped
+    enabled: false
 
 - name: Enable kernel module
   copy:
