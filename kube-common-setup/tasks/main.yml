@@ -85,8 +85,6 @@
     block: |
       [host."https://registryserver.ieims.local"]
       capabilities = ["pull", "resolve"]
-
-      [host."https://registryserver.ieims.local"]
       ca = "/etc/containerd/certs.d/registryserver.ieims.local/ca.crt"
     marker: "# START ANSIBLE MANAGED BLOCK"
 
