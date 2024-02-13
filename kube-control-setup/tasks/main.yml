@@ -5,10 +5,6 @@
     disable_excludes: kubernetes
     state: present
 
-- name: Append alias to .bashrc
-  command: echo "alias k='kubectl'" >> /root/.bashrc
-  become_user: root
-
 - name: Pull kubernetes container images
   command: kubeadm config images pull
 

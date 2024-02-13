@@ -1,8 +1,8 @@
 [kubernetes]
+[kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
 enabled=1
 gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-# exclude=kubelet-1.18.* kubelet-1.17.* kubelet-1.16.* kubeadm kubectl
-exclude=kubelet-1.28.* kubelet-1.18.* kubelet-1.17.* kubelet-1.16.* kubeadm kubectl
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni

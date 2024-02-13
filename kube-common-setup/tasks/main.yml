@@ -3,16 +3,16 @@
   selinux:
     state: disabled
 
-- name: Install firewalld package
-  yum:
-    name: firewalld
-    state: present
+# - name: Install firewalld package
+#   yum:
+#     name: firewalld
+#     state: present
 
-- name: disable firewall service for labs
-  service:
-    name: firewalld
-    state: stopped
-    enabled: false
+# - name: disable firewall service for labs
+#   service:
+#     name: firewalld
+#     state: stopped
+#     enabled: false
 
 - name: Enable kernel module
   copy:
@@ -61,15 +61,15 @@
 - name: Backup containerd config.toml
   command: mv /etc/containerd/config.toml /etc/containerd/config.toml.orig
 
-# - name: Generate default containerd config.toml
-#   shell: containerd config default > /etc/containerd/config.toml
+- name: Generate default containerd config.toml
+  shell: containerd config default > /etc/containerd/config.toml
 
-# - name: Modify containerd config.toml
-#   replace:
-#     path: /etc/containerd/config.toml
-#     regexp: '^(\s*SystemdCgroup =) false'
-#     replace: '\1 true'
-#     backup: yes
+- name: Modify containerd config.toml
+  replace:
+    path: /etc/containerd/config.toml
+    regexp: '^(\s*SystemdCgroup =) false'
+    replace: '\1 true'
+    backup: yes
 
 - name: Add kubernetes repository source
   copy:
@@ -78,6 +78,17 @@
     owner: root
     group: root
     mode: "0644"
+
+- name: Add text block to file
+  blockinfile:
+    path: /etc/containerd/config.toml
+    block: |
+      [host."https://registryserver.ieims.local"]
+      capabilities = ["pull", "resolve"]
+
+      [host."https://registryserver.ieims.local"]
+      ca = "/etc/containerd/certs.d/registryserver.ieims.local/ca.crt"
+    marker: "# START ANSIBLE MANAGED BLOCK"
 
 - name: Creates directory
   ansible.builtin.file:
@@ -92,27 +103,19 @@
     group: root
     mode: "0644"
 
-- name: Update harbor registry config file
-  copy:
-    src: files/host.toml
-    dest: /etc/containerd/certs.d/registryserver.ieims.local/host.toml
-    owner: root
-    group: root
-    mode: "0644"
-
 - name: start containerd
   service:
     name: containerd
     state: restarted
     enabled: true
 
-- name: Letting iptables see bridged traffic
-  copy:
-    src: files/config.toml
-    dest: /etc/containerd/config.toml
-    owner: root
-    group: root
-    mode: "0644"
+# - name: Letting iptables see bridged traffic
+#   copy:
+#     src: files/config.toml
+#     dest: /etc/containerd/config.toml
+#     owner: root
+#     group: root
+#     mode: "0644"
 
 - name: Update repository cache
   dnf:
@@ -122,10 +125,8 @@
 - name: Install kubelet, kubeadm
   dnf:
     name:
-      # - kubelet
-      # - kubeadm
-      - kubelet-1.27.2-0
-      - kubeadm-1.27.2-0
+      - kubelet
+      - kubeadm
     disable_excludes: kubernetes
     state: latest
     update_cache: true
