@@ -71,7 +71,7 @@
 #     replace: '\1 true'
 #     backup: yes
 
-- name: Letting iptables see bridged traffic
+- name: Add kubernetes repository source
   copy:
     src: files/repo-k8s.repo
     dest: /etc/yum.repos.d/kubernetes.repo
@@ -79,7 +79,12 @@
     group: root
     mode: "0644"
 
-- name: Letting iptables see bridged traffic
+- name: Creates directory
+  ansible.builtin.file:
+    path: /etc/containerd/certs.d/registryserver.ieims.local/
+    state: directory
+
+- name: Update certificates for harbor server
   copy:
     src: files/ca.crt
     dest: /etc/containerd/certs.d/registryserver.ieims.local/ca.crt
@@ -87,7 +92,7 @@
     group: root
     mode: "0644"
 
-- name: Letting iptables see bridged traffic
+- name: Update harbor registry config file
   copy:
     src: files/host.toml
     dest: /etc/containerd/certs.d/registryserver.ieims.local/host.toml
