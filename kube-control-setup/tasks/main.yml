@@ -9,18 +9,8 @@
   command: kubeadm config images pull
 
 - name: Initialize kubernetes cluster
-  shell: kubeadm init --control-plane-endpoint={{ control_ip }} --pod-network-cidr={{ kubernetes.cidr }} --apiserver-advertise-address {{ ansible_default_ipv4.address }}
+  shell: kubeadm init --control-plane-endpoint={{ kubernetes.control_ip }} --pod-network-cidr={{ kubernetes.cidr }} --apiserver-advertise-address {{ kubernetes.control_ip }}
   register: output
-
-# - name: Copy output to ansible host
-#   copy:
-#     dest: /tmp/kube-output.txt
-#     content: |-
-#       {% for host in ansible_play_hosts_all %}
-#       {{ '###' }}{{ host }}{{ '###' }}
-#       {{ hostvars[host]['output']['stdout'] }}
-#       {% endfor %}
-#   delegate_to: localhost
 
 - name: Save output file from master
   copy:

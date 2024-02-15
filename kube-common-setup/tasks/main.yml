@@ -1,14 +1,17 @@
 ---
-- name: disable SELinux on reboot
+- name: Disable SELinux on reboot
   selinux:
     state: disabled
+
+- name: Disable SELinux on current session
+  command: sudo setenforce 0
 
 - name: Install firewalld package
   yum:
     name: firewalld
     state: present
 
-- name: disable firewall service for labs
+- name: Disable firewall service for labs
   service:
     name: firewalld
     state: stopped
