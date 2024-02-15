@@ -2,4 +2,4 @@
 kube-master
 
 [knodes]
-kube-worker3
+kube-worker

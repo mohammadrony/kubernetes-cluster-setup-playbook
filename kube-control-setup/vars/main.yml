@@ -1,2 +1,4 @@
 ---
-control_ip: 172.29.58.196
+kubernetes:
+  control_ip: 172.29.58.196
+  cidr: 10.20.0.0/16

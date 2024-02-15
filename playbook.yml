@@ -19,3 +19,10 @@
   gather_facts: false
   roles:
     - kube-node-setup
+
+- name: Setup kubernetes node
+  hosts: kcontrol
+  become: true
+  gather_facts: false
+  roles:
+    - post-installation

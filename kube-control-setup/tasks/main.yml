@@ -9,7 +9,7 @@
   command: kubeadm config images pull
 
 - name: Initialize kubernetes cluster
-  shell: kubeadm init --control-plane-endpoint={{ control_ip }} --pod-network-cidr=172.16.0.0/16  --cri-socket=unix:///run/containerd/containerd.sock
+  shell: kubeadm init --control-plane-endpoint={{ control_ip }} --pod-network-cidr={{ kubernetes.cidr }} --apiserver-advertise-address {{ ansible_default_ipv4.address }}
   register: output
 
 # - name: Copy output to ansible host
@@ -65,15 +65,3 @@
 - name: Pause for 2 minutes to start kube custer
   pause:
     minutes: 2
-
-- name: Download Calico YAML
-  get_url:
-    url: https://raw.githubusercontent.com/projectcalico/calico/master/manifests/calico.yaml
-    dest: /root/calico.yaml
-
-- name: Apply Calico YAML
-  command: kubectl apply -f calico.yaml
-  args:
-    chdir: /root/
-# - name: "deploy :: applies the Nginx controller manifests"
-#   ansible.builtin.shell: "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-{{ ingress_nginx.version }}/deploy/static/provider/{{ ingress_nginx.provider }}/deploy.yaml"

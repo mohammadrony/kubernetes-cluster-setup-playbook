@@ -107,14 +107,6 @@
     state: restarted
     enabled: true
 
-# - name: Letting iptables see bridged traffic
-#   copy:
-#     src: files/config.toml
-#     dest: /etc/containerd/config.toml
-#     owner: root
-#     group: root
-#     mode: "0644"
-
 - name: Update repository cache
   dnf:
     name: "*"
@@ -134,6 +126,5 @@
     name: kubelet
     enabled: yes
     state: started
-
-- name: reboot ALL machines
-  reboot:
+# - name: reboot ALL machines
+#   reboot:
