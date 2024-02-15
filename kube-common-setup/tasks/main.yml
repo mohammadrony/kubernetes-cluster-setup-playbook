@@ -4,7 +4,7 @@
     state: disabled
 
 - name: Disable SELinux on current session
-  command: sudo setenforce 0
+  command: setenforce 0
 
 - name: Install firewalld package
   yum:
@@ -32,6 +32,15 @@
     owner: root
     group: root
     mode: "0644"
+
+- name: Letting iptables see bridged traffic
+  blockinfile:
+    path: /etc/sysctl.d/99-sysctl.conf
+    block: |
+      net.bridge.bridge-nf-call-iptables = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.ipv4.ip_forward = 1
+    marker: "# START ANSIBLE MANAGED BLOCK"
 
 - name: Reload sysctl config for iptables
   command: sysctl --system

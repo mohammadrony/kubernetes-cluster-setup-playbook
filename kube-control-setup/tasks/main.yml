@@ -9,7 +9,7 @@
   command: kubeadm config images pull
 
 - name: Initialize kubernetes cluster
-  shell: kubeadm init --control-plane-endpoint={{ kubernetes.control_ip }} --pod-network-cidr={{ kubernetes.cidr }} --apiserver-advertise-address {{ kubernetes.control_ip }}
+  shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{ kubernetes.cidr }}
   register: output
 
 - name: Save output file from master
