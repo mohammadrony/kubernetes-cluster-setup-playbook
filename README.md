@@ -15,7 +15,7 @@ git clone https://github.com/mohammadrony/kubernetes-cluster-setup-playbook.git
 
 ## Update variable in playbook
 
-Update the control plane ip address in [kube-control-setup/vars/main.yml](./kube-control-setup/vars/main.yml) file.
+Update the variables in [kube control](./kube-control-setup/vars/main.yml) and [post installation](./post-installation/vars/main.yml) role.
 
 ## Check ansible hosts file
 
@@ -23,10 +23,10 @@ Check [hosts](./hosts) file for host-group and host-names with control plane and
 
 ```bash
 [kcontrol]
-kube-control
+vm-master
 
 [knodes]
-kube-node1
+vm-worker
 ```
 
 ## Run Ansible playbook

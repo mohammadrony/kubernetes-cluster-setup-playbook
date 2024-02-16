@@ -9,8 +9,20 @@
   command: kubeadm config images pull
 
 - name: Initialize kubernetes cluster
-  shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{ kubernetes.cidr }}
+  shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{ kubernetes.cidr }} --cri-socket=unix:///run/containerd/containerd.sock
   register: output
+
+- name: Allow user to run kubectl
+  shell: |
+    mkdir -p /home/{{ user }}/.kube
+    cp -i /etc/kubernetes/admin.conf /home/{{ user }}/.kube/config
+    chown {{ user }}:{{ user }} /home/{{ user }}/.kube/config
+
+- name: Add kubectl alias
+  lineinfile:
+    path: /home/{{ user }}/.bashrc
+    line: "alias k='kubectl'"
+    state: present
 
 - name: Save output file from master
   copy:
@@ -23,28 +35,12 @@
     dest: /home/ansible/kube-output.txt
     flat: yes
 
-- name: Create .kube directory
-  file:
-    path: /root/.kube
-    state: directory
-    mode: 0755
-
-- name: Copy admin.conf to user kube config
-  copy:
-    src: /etc/kubernetes/admin.conf
-    dest: /root/.kube/config
-    owner: root
-    group: root
-    mode: "0644"
-    remote_src: yes
-
 - name: Fetch file and set permissions
   fetch:
-    src: /root/.kube/config
+    src: /home/{{ user }}/.kube/config
     dest: /home/ansible/kubeconfig.txt
     flat: yes
     validate_checksum: yes
-  become_user: root
 
 - name: Set KUBECONFIG environment variable
   lineinfile:

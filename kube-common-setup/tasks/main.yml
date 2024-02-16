@@ -25,6 +25,11 @@
     group: root
     mode: "0644"
 
+- name: Enable kernal module command
+  shell: |
+    modprobe overlay
+    modprobe br_netfilter
+
 - name: Letting iptables see bridged traffic
   copy:
     src: files/network-k8s.conf
@@ -32,15 +37,6 @@
     owner: root
     group: root
     mode: "0644"
-
-- name: Letting iptables see bridged traffic
-  blockinfile:
-    path: /etc/sysctl.d/99-sysctl.conf
-    block: |
-      net.bridge.bridge-nf-call-iptables = 1
-      net.bridge.bridge-nf-call-ip6tables = 1
-      net.ipv4.ip_forward = 1
-    marker: "# START ANSIBLE MANAGED BLOCK"
 
 - name: Reload sysctl config for iptables
   command: sysctl --system
@@ -57,9 +53,16 @@
 
 - name: Install dnf-utils
   yum:
-    name: yum-utils
+    name:
+      - yum-utils
+      - iproute-tc
     state: present
     update_cache: true
+
+- name: Remove runc
+  yum:
+    name: runc
+    state: absent
 
 - name: Add Docker repository
   shell: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
