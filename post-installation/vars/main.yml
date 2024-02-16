@@ -3,7 +3,7 @@ calico:
   version: "v3.27.0"
 
 metallb:
-  addresses: 172.29.58.196
+  addresses: 192.168.0.113
   version: "v0.14.3"
 
 ingress_nginx:

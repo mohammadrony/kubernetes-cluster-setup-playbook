@@ -1,5 +1,5 @@
 [kcontrol]
-kube-master
+vm-master
 
 [knodes]
-kube-worker
+vm-worker
