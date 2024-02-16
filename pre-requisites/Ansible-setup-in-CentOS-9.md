@@ -79,46 +79,47 @@ ssh-keygen -f /home/ansible/.ssh/id_rsa
 
 Commands mentioning `kube_host` are required to run on all managed nodes. i.e., `kube-control` and `kube-node1`.
 
+Login to ansible managed node
+
+```bash
+ssh root@<kube-host>
+```
+
 Create ansible user in managed node
 
 ```bash
-kube_host="<kube-host>"
-ansible_home='/home/ansible'
-
-ssh root@${kube_host} "useradd ansible"
-ssh root@${kube_host} "mkdir -p ${ansible_home}/.ssh"
-ssh root@${kube_host} "chmod 700 ${ansible_home}/.ssh"
-ssh root@${kube_host} "chown -R ansible:ansible ${ansible_home}/.ssh"
+useradd ansible
+mkdir -p /home/ansible/.ssh
+chmod 700 /home/ansible/.ssh
+chown -R ansible:ansible /home/ansible/.ssh
 ```
 
-Copy public key to .ssh/authorized_keys files in managed nodes
+Copy public key from ansible control node to managed nodes
 
 ```bash
-kube_host="<k8s-host>"
-ansible_home='/home/ansible'
+cat /home/ansible/.ssh/id_rsa.pub
+```
 
-scp ${ansible_home}/.ssh/id_rsa.pub root@${kube_host}:${ansible_home}/.ssh/id_rsa.pub
-ssh root@${kube_host} "chown ansible:ansible ${ansible_home}/.ssh/id_rsa.pub"
-ssh root@${kube_host} "tee < ${ansible_home}/.ssh/id_rsa.pub -a ${ansible_home}/.ssh/authorized_keys"
-ssh root@${kube_host} "chown ansible:ansible ${ansible_home}/.ssh/authorized_keys"
-ssh root@${kube_host} "chmod 600 ${ansible_home}/.ssh/authorized_keys"
+```bash
+ansible_home='/home/ansible'
+chown ansible:ansible /home/ansible/.ssh/id_rsa.pub
+tee < /home/ansible/.ssh/id_rsa.pub -a /home/ansible/.ssh/authorized_keys
+chown ansible:ansible /home/ansible/.ssh/authorized_keys
+chmod 600 /home/ansible/.ssh/authorized_keys
 ```
 
 Add ansible to sudoers group in managed nodes
 
 ```bash
-kube_host="<k8s-host>"
-ssh root@${kube_host} "echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible"
+echo 'ansible ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/ansible
 ```
 
 Allow public key connection for user
 
 ```bash
-kube_host="<k8s-host>"
-
-ssh root@${kube_host} "sed -i 's/#PubkeyAuthentication\syes/PubkeyAuthentication yes/' /etc/ssh/sshd_config"
-ssh root@${kube_host} "sed -i 's/#AuthorizedKeysFile\s.ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config"
-ssh root@${kube_host} "systemctl restart sshd"
+sed -i 's/#PubkeyAuthentication\syes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/#AuthorizedKeysFile\s.ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
+systemctl restart sshd
 ```
 
 ## Create Host groups
@@ -145,3 +146,4 @@ ansible all -m ping
 sudo userdel ansible
 sudo rm /home/ansible -rf
 sudo rm /etc/sudoers.d/ansible -f
+```

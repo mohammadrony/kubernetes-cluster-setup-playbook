@@ -12,11 +12,31 @@
   shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{ kubernetes.cidr }} --cri-socket=unix:///run/containerd/containerd.sock
   register: output
 
-- name: Allow user to run kubectl
-  shell: |
-    mkdir -p /home/{{ user }}/.kube
-    cp -i /etc/kubernetes/admin.conf /home/{{ user }}/.kube/config
-    chown {{ user }}:{{ user }} /home/{{ user }}/.kube/config
+- name: Creates kubeconfig directory
+  ansible.builtin.file:
+    path: /home/{{ user }}/.kube
+    state: directory
+
+- name: Creates kubeconfig directory
+  ansible.builtin.file:
+    path: /root/.kube
+    state: directory
+
+- name: Copy kubeconfig file
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Copy kubeconfig file
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/{{ user }}/.kube/config
+    owner: { { user } }
+    group: { { user } }
+    mode: "0644"
 
 - name: Add kubectl alias
   lineinfile:
@@ -45,7 +65,7 @@
 - name: Set KUBECONFIG environment variable
   lineinfile:
     path: /etc/profile.d/kubeconfig.sh
-    line: "export KUBECONFIG=/etc/kubernetes/admin.conf"
+    line: "export KUBECONFIG=/home/{{ user }}/.kube/config"
     create: yes
 
 - name: Pause for 2 minutes to start kube custer

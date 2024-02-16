@@ -29,10 +29,10 @@
   args:
     chdir: /tmp/
 
-- name: Waiting for metallb to ready
-  shell: kubectl wait pod --all --for=condition=Ready --namespace=metallb-system --timeout=1000s
+- name: Waiting for MetalLB pods to ready
+  shell: kubectl wait pod --all --for=condition=Ready --namespace=metallb-system --timeout=300s
 
-- name: Apply MetalLB config
+- name: Copy MetalLB IP pool config
   template:
     src: files/metallb-ip.yaml.j2
     dest: /tmp/metallb-ip.yaml
