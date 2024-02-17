@@ -1,11 +1,4 @@
 ---
-- name: Disable SELinux on reboot
-  selinux:
-    state: disabled
-
-- name: Disable SELinux command
-  command: setenforce 0
-
 - name: Remove podman runc
   yum:
     name:
