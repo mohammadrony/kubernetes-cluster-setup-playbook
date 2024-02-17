@@ -1,14 +1,4 @@
 ---
-- name: Download Calico YAML
-  get_url:
-    url: https://raw.githubusercontent.com/projectcalico/calico/master/manifests/calico.yaml
-    dest: /tmp/calico.yaml
-
-- name: Apply Calico YAML
-  command: kubectl apply -f calico.yaml
-  args:
-    chdir: /tmp/
-
 - name: "Apply Nginx controller manifests"
   get_url:
     url: https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-{{ ingress_nginx.version }}/deploy/static/provider/{{ ingress_nginx.provider }}/deploy.yaml
@@ -29,7 +19,7 @@
   args:
     chdir: /tmp/
 
-- name: Waiting for MetalLB pods to ready
+- name: Pause for MetalLB pods to ready
   shell: kubectl wait pod --all --for=condition=Ready --namespace=metallb-system --timeout=300s
 
 - name: Copy MetalLB IP pool config

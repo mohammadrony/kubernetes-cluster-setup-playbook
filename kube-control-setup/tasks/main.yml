@@ -12,42 +12,30 @@
   shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{ kubernetes.cidr }} --cri-socket=unix:///run/containerd/containerd.sock
   register: output
 
+- name: Save output file from master
+  copy:
+    content: "{{ output.stdout }}"
+    dest: /tmp/kube-output.txt
+
 - name: Creates kubeconfig directory
-  ansible.builtin.file:
+  file:
     path: /home/{{ user }}/.kube
     state: directory
-
-- name: Creates kubeconfig directory
-  ansible.builtin.file:
-    path: /root/.kube
-    state: directory
-
-- name: Copy kubeconfig file
-  copy:
-    src: /etc/kubernetes/admin.conf
-    dest: /root/.kube/config
-    owner: root
-    group: root
-    mode: "0600"
 
 - name: Copy kubeconfig file
   copy:
     src: /etc/kubernetes/admin.conf
     dest: /home/{{ user }}/.kube/config
-    owner: { { user } }
-    group: { { user } }
+    owner: "{{ user }}"
+    group: "{{ user }}"
     mode: "0644"
+    remote_src: yes
 
 - name: Add kubectl alias
   lineinfile:
     path: /home/{{ user }}/.bashrc
     line: "alias k='kubectl'"
     state: present
-
-- name: Save output file from master
-  copy:
-    content: "{{ output.stdout }}"
-    dest: /tmp/kube-output.txt
 
 - name: Copy join command to local file
   fetch:
@@ -67,6 +55,18 @@
     path: /etc/profile.d/kubeconfig.sh
     line: "export KUBECONFIG=/home/{{ user }}/.kube/config"
     create: yes
+
+- name: Download Calico YAML
+  get_url:
+    url: https://raw.githubusercontent.com/projectcalico/calico/{{ calico.version }}/manifests/calico.yaml
+    dest: /tmp/calico.yaml
+
+- name: Apply Calico YAML
+  command: kubectl apply -f calico.yaml
+  args:
+    chdir: /tmp/
+  environment:
+    KUBECONFIG: /home/{{ user }}/.kube/config
 
 - name: Pause for 2 minutes to start kube custer
   pause:

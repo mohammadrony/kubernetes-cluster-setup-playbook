@@ -1,5 +1,9 @@
 ---
 user: ansible
+
+calico:
+  version: "v3.27.0"
+
 kubernetes:
   control_ip: 192.168.0.113
   cidr: 10.20.0.0/16
