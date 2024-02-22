@@ -1,4 +1,5 @@
 #!/bin/bash
+# Ansible client setup
 useradd ansible
 passwd -d ansible
 usermod -aG wheel ansible
@@ -13,7 +14,3 @@ sed -i 's/#PubkeyAuthentication\syes/PubkeyAuthentication yes/' /etc/ssh/sshd_co
 sed -i 's/#AuthorizedKeysFile\s.ssh\/authorized_keys/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
 sed -i 's/^\(#PermitRootLogin\s.*\)/PermitRootLogin yes\n\1/' /etc/ssh/sshd_config
 systemctl restart sshd
-
-# Set hostname
-echo "<hostname>" > /etc/hostname
-reboot now
