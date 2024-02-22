@@ -3,7 +3,15 @@ user: ansible
 
 calico:
   version: "v3.27.0"
+  cidr: 192.168.0.0/16
+
+flannel:
+  version: "v0.24.2"
+  cidr: 10.244.0.0/16
+
+weavenet:
+  version: "v2.8.1"
+  cidr: 10.32.0.0/12
 
 kubernetes:
   control_ip: 192.168.0.113
-  cidr: 10.20.0.0/16

@@ -9,7 +9,7 @@
   command: kubeadm config images pull
 
 - name: Initialize kubernetes cluster
-  shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{ kubernetes.cidr }} --cri-socket=unix:///run/containerd/containerd.sock
+  shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{  calico.cidr }} --cri-socket=unix:///run/containerd/containerd.sock
   register: output
 
 - name: Save output file from master
