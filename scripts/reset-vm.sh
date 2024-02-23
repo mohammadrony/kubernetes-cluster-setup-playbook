@@ -1,7 +1,5 @@
 #!/bin/bash
-# Reset VM
-sudo kubeadm reset -f
-sudo rm -rf /etc/cni/net.d
+# Reset CentOS VM
 sudo rm -f /etc/yum.repos.d/kubernetes.repo
 sudo rm -f /etc/containerd/config.toml
 sudo rm -f /etc/modules-load.d/k8s.conf

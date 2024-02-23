@@ -1,6 +1,5 @@
 #!/bin/bash
 # Reset k8s node
-NODE=''
-kubectl drain $NODE --ignore-daemonsets
-kubectl cordon $NODE
-kubectl delete node $NODE
+sudo kubeadm reset -f
+sudo rm -rf /etc/cni/net.d
+sudo systemctl restart containerd

@@ -1,6 +1,6 @@
 ---
 metallb:
-  addresses: 192.168.0.113/32
+  addresses: 192.168.56.115/32
   version: "v0.14.3"
 
 ingress_nginx:
