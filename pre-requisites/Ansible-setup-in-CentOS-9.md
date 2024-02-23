@@ -15,28 +15,28 @@ Configure IP address and host name in control node for ansible
 
 ```bash
 echo '<ip-addr1> <ansible-host>' >> /etc/hosts
-echo '<ip-addr2> kube-control' >> /etc/hosts
-echo '<ip-addr3> kube-node1' >> /etc/hosts
+echo '<ip-addr2> vm-master' >> /etc/hosts
+echo '<ip-addr3> vm-worker' >> /etc/hosts
 ```
 
 Configure IP address and host name in kubernetes master node
 
 ```bash
-kube_control="<ip-addr2>"
-ssh root@${kube_control} "echo 'kube-control' >> /etc/hostname"
-ssh root@${kube_control} "echo '<ip-addr2> kube-control' >> /etc/hosts"
-ssh root@${kube_control} "echo '<ip-addr3> kube-node1' >> /etc/hosts"
-ssh root@${kube_control} "reboot now"
+ssh root@vm-master
+echo 'vm-master' >> /etc/hostname
+echo '<ip-addr2> vm-master' >> /etc/hosts
+echo '<ip-addr3> vm-worker' >> /etc/hosts
+reboot now
 ```
 
 Configure IP address and host name in kubernetes worker node
 
 ```bash
-kube_node1="<ip-addr3>"
-ssh root@${kube_node1} "echo 'kube-node1' >> /etc/hostname"
-ssh root@${kube_node1} "echo '<ip-addr2> kube-control' >> /etc/hosts"
-ssh root@${kube_node1} "echo '<ip-addr3> kube-node1' >> /etc/hosts"
-ssh root@${kube_node1} "reboot now"
+ssh root@vm-worker
+echo 'vm-worker' >> /etc/hostname
+echo '<ip-addr2> vm-master' >> /etc/hosts
+echo '<ip-addr3> vm-worker' >> /etc/hosts
+reboot now
 ```
 
 ## Ansible control node setup
@@ -77,7 +77,7 @@ ssh-keygen -f /home/ansible/.ssh/id_rsa
 
 ## Ansible managed nodes setup
 
-Commands mentioning `kube_host` are required to run on all managed nodes. i.e., `kube-control` and `kube-node1`.
+Commands mentioning `kube_host` are required to run on all managed nodes. i.e., `vm-master` and `vm-worker`.
 
 Login to ansible managed node
 
