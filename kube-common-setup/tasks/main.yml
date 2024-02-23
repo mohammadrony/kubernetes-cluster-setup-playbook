@@ -5,22 +5,26 @@
       - runc
       - podman
     state: absent
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Update repository cache
   dnf:
     name: "*"
     state: latest
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install firewalld package
   yum:
     name: firewalld
     state: present
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Disable firewall service for labs
   service:
     name: firewalld
     state: stopped
     enabled: false
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Enable kernel module
   copy:
@@ -63,15 +67,18 @@
       - iproute-tc
     state: present
     update_cache: true
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Add Docker repository
   shell: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install containerd
   yum:
     name: containerd.io
     state: present
     update_cache: true
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Backup containerd config.toml
   command: mv /etc/containerd/config.toml /etc/containerd/config.toml.orig
@@ -108,6 +115,7 @@
     disable_excludes: kubernetes
     state: latest
     update_cache: true
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Start Kubelet
   service:
