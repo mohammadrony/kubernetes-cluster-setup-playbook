@@ -94,28 +94,6 @@
     group: root
     mode: "0644"
 
-# - name: Add text block to file
-#   blockinfile:
-#     path: /etc/containerd/config.toml
-#     block: |
-#       [host."https://registryserver.ieims.local"]
-#       capabilities = ["pull", "resolve"]
-#       ca = "/etc/containerd/certs.d/registryserver.ieims.local/ca.crt"
-#     marker: "# START ANSIBLE MANAGED BLOCK"
-
-# - name: Creates directory
-#   ansible.builtin.file:
-#     path: /etc/containerd/certs.d/registryserver.ieims.local/
-#     state: directory
-
-# - name: Update certificates for harbor server
-#   copy:
-#     src: files/ca.crt
-#     dest: /etc/containerd/certs.d/registryserver.ieims.local/ca.crt
-#     owner: root
-#     group: root
-#     mode: "0644"
-
 - name: start containerd
   service:
     name: containerd
