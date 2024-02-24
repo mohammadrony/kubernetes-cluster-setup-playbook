@@ -31,3 +31,28 @@
   command: kubectl apply -f /tmp/metallb-ip.yaml
   args:
     chdir: /tmp/
+
+# For EXT4 and XFS file system
+- name: Install Longhorn support package in CentOS
+  yum:
+    name:
+      - iscsi-initiator-utils
+      - nfs-utils
+    state: present
+    update_cache: true
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Install Longhorn support package in Ubuntu
+  apt:
+    name:
+      - open-iscsi
+      - nfs-common
+    state: present
+    update_cache: true
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Start iscsid
+  service:
+    name: iscsid
+    state: started
+    enabled: true
