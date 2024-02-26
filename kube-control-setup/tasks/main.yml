@@ -46,7 +46,7 @@
 - name: Fetch file and set permissions
   fetch:
     src: /home/{{ user }}/.kube/config
-    dest: /home/{{ user }}/kubeconfig.txt
+    dest: /home/{{ user }}/kubeconfig
     flat: yes
     validate_checksum: yes
 

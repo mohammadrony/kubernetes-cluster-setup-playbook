@@ -15,7 +15,7 @@ git clone https://github.com/mohammadrony/kubernetes-cluster-setup-playbook.git
 
 ## Update variable in playbook
 
-Update the variables in [kube control](./kube-control-setup/vars/main.yml) and [post installation](./post-installation/vars/main.yml) role.
+Update the variables in [kube control setup](./kube-control-setup/vars/main.yml), [kube node setup](./kube-node-setup/vars/main.yml) and [post installation](./post-installation/vars/main.yml) role.
 
 ## Check ansible hosts file
 
@@ -37,7 +37,7 @@ ansible-playbook playbook.yml
 
 ## Access Kubernetes cluster from remote host
 
-- Find the config file for the cluster from Ansible control host's `/home/ansible/kubeconfig.txt` file or Kubernetes master host's `/root/.kube/config` file.
+- Find the config file for the cluster from Ansible control host's `/home/ansible/kubeconfig` file.
 - Copy the config file to remote host's `~/.kube/config` file.
 
 Thank you.
