@@ -62,4 +62,5 @@
     chdir: /tmp/
 
 - name: Pause for Calico pods to ready
+  become_user: "{{ user }}"
   shell: kubectl wait pod --all --for=condition=Ready --namespace=kube-system --timeout=300s

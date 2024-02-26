@@ -4,6 +4,7 @@ user: ansible
 calico:
   version: "v3.27.0"
   cidr: 192.168.0.0/16
+  cidr_vm: 192.168.128.0/17
 
 flannel:
   version: "v0.24.2"
