@@ -37,12 +37,6 @@
     mode: "0644"
     remote_src: yes
 
-- name: Set KUBECONFIG environment variable
-  lineinfile:
-    path: /etc/profile.d/kubeconfig.sh
-    line: "export KUBECONFIG=/home/{{ user }}/.kube/config"
-    create: yes
-
 - name: Add kubectl alias
   lineinfile:
     path: /home/{{ user }}/.bashrc
@@ -62,11 +56,10 @@
     dest: /tmp/calico.yaml
 
 - name: Apply Calico YAML
-  command: kubectl apply -f calico.yaml
+  become_user: "{{ user }}"
+  shell: kubectl apply -f calico.yaml
   args:
     chdir: /tmp/
-  environment:
-    KUBECONFIG: /home/{{ user }}/.kube/config
 
 - name: Pause for Calico pods to ready
   shell: kubectl wait pod --all --for=condition=Ready --namespace=kube-system --timeout=300s

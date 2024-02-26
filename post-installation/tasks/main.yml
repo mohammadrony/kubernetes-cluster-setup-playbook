@@ -1,15 +1,17 @@
 ---
-- name: Apply Nginx controller manifests
+- name: Download MetalLB manifests
   get_url:
     url: https://raw.githubusercontent.com/metallb/metallb/{{ metallb.version }}/config/manifests/metallb-native.yaml
-    dest: /tmp/metallb.yaml
+    dest: /tmp/metallb-native.yaml
 
-- name: Apply Ingress YAML
-  command: kubectl apply -f metallb.yaml
+- name: Apply MetalLB YAML
+  become_user: "{{ user }}"
+  shell: kubectl apply -f metallb-native.yaml
   args:
     chdir: /tmp/
 
 - name: Pause for MetalLB pods to ready
+  become_user: "{{ user }}"
   shell: kubectl wait pod --all --for=condition=Ready --namespace=metallb-system --timeout=300s
 
 - name: Copy MetalLB IP pool config
@@ -18,7 +20,8 @@
     dest: /tmp/metallb-ip.yaml
 
 - name: Apply MetalLB IP pool
-  command: kubectl apply -f /tmp/metallb-ip.yaml
+  become_user: "{{ user }}"
+  shell: kubectl apply -f /tmp/metallb-ip.yaml
   args:
     chdir: /tmp/
 
@@ -28,7 +31,8 @@
     dest: /tmp/ingress_nginx.yaml
 
 - name: Apply Ingress YAML
-  command: kubectl apply -f ingress_nginx.yaml
+  become_user: "{{ user }}"
+  shell: kubectl apply -f ingress_nginx.yaml
   args:
     chdir: /tmp/
 
@@ -63,14 +67,17 @@
     dest: /tmp/get-helm-3.sh
 
 - name: Install Helm
-  command: bash get-helm-3.sh
+  become_user: "{{ user }}"
+  shell: bash get-helm-3.sh
   args:
     chdir: /tmp/
 
 - name: Add Longhorn repo
-  command: |
+  become_user: "{{ user }}"
+  shell: |
     helm repo add longhorn https://charts.longhorn.io
     helm repo update
 
 - name: Install longhorn using Helm
-  command: helm upgrade --install longhorn longhorn/longhorn --create-namespace --namespace longhorn-system
+  become_user: "{{ user }}"
+  shell: helm upgrade --install longhorn longhorn/longhorn --create-namespace --namespace longhorn-system
