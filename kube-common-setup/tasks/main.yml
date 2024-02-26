@@ -1,4 +1,9 @@
 ---
+- name: disable SELinux on reboot
+  selinux:
+    state: disabled
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
 - name: Remove podman runc
   yum:
     name:
@@ -30,22 +35,11 @@
   copy:
     src: files/module-k8s.conf
     dest: /etc/modules-load.d/k8s.conf
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: Enable kernal module command
-  shell: |
-    modprobe overlay
-    modprobe br_netfilter
 
 - name: Letting iptables see bridged traffic
   copy:
     src: files/network-k8s.conf
     dest: /etc/sysctl.d/k8s.conf
-    owner: root
-    group: root
-    mode: "0644"
 
 - name: Reload sysctl config for iptables
   command: sysctl --system
@@ -97,15 +91,13 @@
   copy:
     src: files/repo-k8s.repo
     dest: /etc/yum.repos.d/kubernetes.repo
-    owner: root
-    group: root
-    mode: "0644"
 
 - name: start containerd
   service:
     name: containerd
     state: restarted
     enabled: true
+    daemon-reload: yes
 
 - name: Install kubelet, kubeadm
   dnf:
@@ -122,5 +114,6 @@
     name: kubelet
     enabled: yes
     state: started
-# - name: reboot ALL machines
-#   reboot:
+
+- name: reboot ALL machines
+  reboot:

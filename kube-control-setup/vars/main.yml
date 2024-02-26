@@ -14,4 +14,4 @@ weavenet:
   cidr: 10.32.0.0/12
 
 kubernetes:
-  control_ip: 192.168.56.115
+  control_ip: 192.168.0.112

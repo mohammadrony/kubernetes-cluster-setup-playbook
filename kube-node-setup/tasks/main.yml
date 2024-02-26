@@ -1,7 +1,7 @@
 ---
 - name: Copy join token to node
   copy:
-    src: /home/ansible/kube-output.txt
+    src: /home/{{ user }}/kube-output.txt
     dest: /tmp/kube-output.txt
     owner: root
     group: root

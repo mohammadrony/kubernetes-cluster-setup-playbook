@@ -9,13 +9,19 @@
   command: kubeadm config images pull
 
 - name: Initialize kubernetes cluster
-  shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{  calico.cidr }} --cri-socket=unix:///run/containerd/containerd.sock
+  shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{ calico.cidr }} --cri-socket=unix:///run/containerd/containerd.sock
   register: output
 
 - name: Save output file from master
   copy:
     content: "{{ output.stdout }}"
     dest: /tmp/kube-output.txt
+
+- name: Copy join command to local file
+  fetch:
+    src: /tmp/kube-output.txt
+    dest: /home/{{ user }}/kube-output.txt
+    flat: yes
 
 - name: Creates kubeconfig directory
   file:
@@ -31,30 +37,24 @@
     mode: "0644"
     remote_src: yes
 
+- name: Set KUBECONFIG environment variable
+  lineinfile:
+    path: /etc/profile.d/kubeconfig.sh
+    line: "export KUBECONFIG=/home/{{ user }}/.kube/config"
+    create: yes
+
 - name: Add kubectl alias
   lineinfile:
     path: /home/{{ user }}/.bashrc
     line: "alias k='kubectl'"
     state: present
 
-- name: Copy join command to local file
-  fetch:
-    src: /tmp/kube-output.txt
-    dest: /home/ansible/kube-output.txt
-    flat: yes
-
 - name: Fetch file and set permissions
   fetch:
     src: /home/{{ user }}/.kube/config
-    dest: /home/ansible/kubeconfig.txt
+    dest: /home/{{ user }}/kubeconfig.txt
     flat: yes
     validate_checksum: yes
-
-- name: Set KUBECONFIG environment variable
-  lineinfile:
-    path: /etc/profile.d/kubeconfig.sh
-    line: "export KUBECONFIG=/home/{{ user }}/.kube/config"
-    create: yes
 
 - name: Download Calico YAML
   get_url:
@@ -68,6 +68,5 @@
   environment:
     KUBECONFIG: /home/{{ user }}/.kube/config
 
-- name: Pause for 2 minutes to start kube custer
-  pause:
-    minutes: 2
+- name: Pause for Calico pods to ready
+  shell: kubectl wait pod --all --for=condition=Ready --namespace=kube-system --timeout=300s
