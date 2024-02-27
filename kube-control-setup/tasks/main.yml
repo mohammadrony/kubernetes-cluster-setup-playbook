@@ -53,6 +53,7 @@
 - name: Download Calico YAML
   get_url:
     url: https://raw.githubusercontent.com/projectcalico/calico/{{ calico.version }}/manifests/calico.yaml
+    # https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml
     dest: /tmp/calico.yaml
 
 - name: Apply Calico YAML
