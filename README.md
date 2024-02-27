@@ -1,4 +1,4 @@
-# Configuring kubernetes cluster in with control plane and worker for CentOS 9
+# Configuring kubernetes cluster in CentOS 9
 
 An Ansible playbook to prepare Kubernetes cluster with control plane and worker node.
 
