@@ -10,6 +10,7 @@
 
 - name: Initialize kubernetes cluster
   shell: kubeadm init --apiserver-advertise-address={{ kubernetes.control_ip }} --pod-network-cidr={{ calico.cidr }} --cri-socket=unix:///run/containerd/containerd.sock
+  # kubeadm init --pod-network-cidr=192.168.128.0/17
   register: output
 
 - name: Save output file from master

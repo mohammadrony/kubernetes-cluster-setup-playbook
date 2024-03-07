@@ -16,6 +16,7 @@
   dnf:
     name: "*"
     state: latest
+    nobest: false
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: Install firewalld package

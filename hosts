@@ -1,5 +1,5 @@
 [kcontrol]
-vm-master
+master
 
 [knodes]
-vm-worker
+worker
